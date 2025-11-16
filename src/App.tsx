@@ -85,23 +85,30 @@ function App() {
                   
                   <Route
                     element={
-                      <Authenticated 
-                      key="authenticated-wrapper"
-                      redirectOnFail="/login"
-                    >
+                      <Authenticated
+                        key="authenticated-wrapper"
+                        redirectOnFail="/login"
+                      >
                         <Layout>
                           <Outlet />
                         </Layout>
                       </Authenticated>
                     }
                   >
-                    <Route path="/inicio" element={<DashboardHome />} />
-                    <Route path="/categorias" element={<CategoriaList />} />
-                    <Route path="/productos" element={<ProductsList />} />
-                    <Route path="/empleados" element={<EmpleadosList />} />
+                    {/* Ruta por defecto*/}
+                    <Route index element={<DashboardHome />} />
+
+                    <Route path="inicio" element={<DashboardHome />} />
+                    <Route path="categorias" element={<CategoriaList />} />
+                    <Route path="productos" element={<ProductsList />} />
+                    <Route path="empleados" element={<EmpleadosList />} />
+
+                    
+                    <Route path="*" element={<NavigateToResource resource="dashboard" />} />
                   </Route>
 
-                  <Route path="*" element={<CatchAllNavigate to="/login" />} />
+                  {/* El login SIEMPRE va fuera del Authenticated */}
+                  <Route path="/login" element={<Login />} />
                 </Routes>
                 <RefineKbar />
                 <UnsavedChangesNotifier />
