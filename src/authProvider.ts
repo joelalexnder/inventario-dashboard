@@ -2,7 +2,7 @@
 import type { AuthProvider } from "@refinedev/core";
 import axios from "axios";
 
-const API_URL = "https://proyecto-aws-backend-production.up.railway.app";
+const API_URL = import.meta.env.VITE_API_URL;
 export const TOKEN_KEY = "auth-token";
 export const USER_KEY = "auth-user";
 

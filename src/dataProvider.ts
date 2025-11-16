@@ -1,7 +1,7 @@
 import type { DataProvider } from "@refinedev/core";
 import { TOKEN_KEY, USER_KEY } from "./authProvider";
 
-const API_URL = "https://proyecto-aws-backend-production.up.railway.app";
+const API_URL = import.meta.env.VITE_API_URL;
 
 const getTiendaId = () => {
     const userStr = localStorage.getItem(USER_KEY);
