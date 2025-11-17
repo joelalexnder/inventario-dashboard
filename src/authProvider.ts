@@ -68,7 +68,7 @@ export const authProvider: AuthProvider = {
       try {
         const user = JSON.parse(userStr);
 
-        // Verificar que sea admin de la tienda
+        // Verifica que sea admin de la tienda
         if (!user.roles?.includes("admin_tienda")) {
           localStorage.removeItem(TOKEN_KEY);
           localStorage.removeItem(USER_KEY);

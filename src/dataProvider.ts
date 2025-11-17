@@ -52,7 +52,7 @@ export const dataProvider: DataProvider = {
             let items: any[] = [];
             let total = 0;
 
-            // 🔥 ESTA ES LA PARTE CLAVE PARA TU BACKEND
+            
             if (Array.isArray(data.content)) {
                 items = data.content;
                 total = data.totalElements ?? data.content.length;
