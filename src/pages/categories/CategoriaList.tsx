@@ -8,7 +8,6 @@ export const CategoriaList = () => {
     });
 
     const data = tableQuery.data?.data ?? [];
-    // Asegurar que cada fila tenga una key única (evita warning de React)
     const dataWithKeys = data.map((item: any, index: number) => ({
         __rowKey: item.id ?? `${item.tiendaId ?? '0'}-${item.nombre ?? index}`,
         ...item,

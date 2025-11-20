@@ -16,18 +16,18 @@ export default function DashboardHome() {
         pagination: { mode: "off" },
     });
 
-    // --- datos corregidos ---
+    
     const productos = productosQuery.result.data ?? [];
     const categorias = categoriasQuery.result.data ?? [];
 
-    // --- cargando o error ---
+    
     const isLoading = productosQuery.query.isLoading || categoriasQuery.query.isLoading;
     const isError = productosQuery.query.isError || categoriasQuery.query.isError;
 
     if (isLoading) return <Spin  style={{ margin: 40 }} />;
     if (isError) return <p>Error cargando dashboard</p>;
 
-    // --- calculos ---
+    
     const totalProductos = productos.length;
     const totalCategorias = categorias.length;
     const productosBajoStock = productos.filter(p => p.stock < 10).length;
@@ -107,28 +107,11 @@ export default function DashboardHome() {
 
             <Row gutter={20}>
                 <Col xs={24} md={6}>
-                    <Card hoverable onClick={() => navigate("/productos")}>
-                        ➕ Agregar Producto (pronto)
-                    </Card>
-                </Col>
-
-                <Col xs={24} md={6}>
-                    <Card hoverable onClick={() => navigate("/categorias")}>
-                        ➕ Nueva Categoría
-                    </Card>
-                </Col>
-
-                <Col xs={24} md={6}>
                     <Card hoverable onClick={() => navigate("/empleados")}>
                         ➕ Nuevo Empleado
                     </Card>
                 </Col>
 
-                <Col xs={24} md={6}>
-                    <Card hoverable>
-                        ⚙️ Configuración (pronto)
-                    </Card>
-                </Col>
             </Row>
         </div>
     );

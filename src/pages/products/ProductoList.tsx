@@ -2,48 +2,42 @@ import { useTable } from "@refinedev/antd";
 import { Table } from "antd";
 
 export const ProductsList = () => {
-    const { tableQuery } = useTable({
+
+    const { tableProps } = useTable({
         resource: "productos",
-        pagination: { mode: "off" },
+        pagination: { mode: "server" },
     });
 
-    const data = tableQuery.data?.data ?? [];
-    const isLoading = tableQuery.isLoading;
-    const isError = tableQuery.isError;
+    const handleChange = (pagination: any, filters: any, sorter: any, extra: any) => {
+        tableProps.onChange?.(pagination, filters, sorter, extra);
+    };
 
     return (
         <div style={{ padding: 20 }}>
             <h2>Productos</h2>
 
             <Table
-                loading={isLoading}
-                dataSource={data}
+                {...tableProps}
+                pagination={{
+                    ...tableProps.pagination,
+                    showSizeChanger: true,     
+                    showQuickJumper: false,    
+                    showLessItems: true,       
+                    itemRender: () => null,    
+                    showTotal: undefined,    
+                }}
+                onChange={handleChange}
                 rowKey={(record) => record.id ?? record.codigo_barras ?? record.nombre}
-                pagination={false}
                 columns={[
-                    { 
-                        title: "ID", 
-                        dataIndex: "id",
-                        width: 60,
-                    },
-                    { 
-                        title: "Código", 
-                        dataIndex: "codigo_barras",
-                        width: 120,
-                    },
-                    { 
-                        title: "Nombre", 
-                        dataIndex: "nombre",
-                        width: 200,
-                    },
+                    { title: "ID", dataIndex: "id", width: 60 },
+                    { title: "Código", dataIndex: "codigo_barras", width: 120 },
+                    { title: "Nombre", dataIndex: "nombre", width: 200 },
+
                     {
                         title: "Precio",
                         dataIndex: "precio",
                         width: 100,
-                        render: (v: any) => {
-                            const num = Number(v);
-                            return `S/ ${isNaN(num) ? "0.00" : num.toFixed(2)}`;
-                        },
+                        render: (v: any) => `S/ ${Number(v || 0).toFixed(2)}`,
                     },
 
                     {
@@ -62,16 +56,10 @@ export const ProductsList = () => {
                         ),
                     },
 
-                    { 
-                        title: "Categoría ID", 
-                        dataIndex: "categoriaId",
-                        width: 100,
-                    },
+                    { title: "Categoría ID", dataIndex: "categoriaId", width: 100 },
                 ]}
                 scroll={{ x: 800 }}
             />
-
-            {isError && <p style={{ color: "red" }}>Error al cargar productos</p>}
         </div>
     );
 };

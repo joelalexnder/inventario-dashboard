@@ -18,6 +18,7 @@ import { authProvider } from "./authProvider";
 import { dataProvider } from "./dataProvider";
 import { ColorModeContextProvider } from "./contexts/color-mode";
 import { Layout } from "./components/layout";
+import { Navigate } from "react-router";
 
 // Importar páginas
 import { Login } from "./pages/login";
@@ -80,9 +81,6 @@ function App() {
                   <Route path="/login" element={<Login />} />
                   <Route path="/register" element={<Register />} />
 
-                    <Route path="/" element={<CatchAllNavigate to="/inicio" />} />
-
-                  
                   <Route
                     element={
                       <Authenticated
@@ -96,19 +94,17 @@ function App() {
                     }
                   >
                     {/* Ruta por defecto*/}
-                    <Route index element={<DashboardHome />} />
+                    <Route path="/" element={<Navigate to="/inicio" replace />} />
 
                     <Route path="inicio" element={<DashboardHome />} />
                     <Route path="categorias" element={<CategoriaList />} />
                     <Route path="productos" element={<ProductsList />} />
                     <Route path="empleados" element={<EmpleadosList />} />
 
-                    
-                    <Route path="*" element={<NavigateToResource resource="dashboard" />} />
+                    <Route path="*" element={<Navigate to="/inicio" replace />} />
                   </Route>
 
-                  {/* El login SIEMPRE va fuera del Authenticated */}
-                  <Route path="/login" element={<Login />} />
+  
                 </Routes>
                 <RefineKbar />
                 <UnsavedChangesNotifier />

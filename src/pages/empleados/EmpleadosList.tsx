@@ -2,67 +2,47 @@ import { useTable } from "@refinedev/antd";
 import { Table, Tag } from "antd";
 
 export const EmpleadosList = () => {
-    const { tableQuery } = useTable({
+
+    const { tableProps } = useTable({
         resource: "auth",
-        pagination: { mode: "off" },
+        pagination: { mode: "server" },
     });
 
-    const data = tableQuery.data?.data ?? [];
-    const isLoading = tableQuery.isLoading;
-    const isError = tableQuery.isError;
-
-    // Obtener info del usuario logueado
-    const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+    const handleChange = (pagination: any, filters: any, sorter: any, extra: any) => {
+        tableProps.onChange?.(pagination, filters, sorter, extra);
+    };
 
     return (
         <div style={{ padding: 20 }}>
             <h2>Empleados</h2>
 
             <Table
-                dataSource={data}
-                rowKey={(record) => record.id ?? record.email}
-                loading={isLoading}
-                pagination={false}
+                {...tableProps}
+                pagination={{
+                    ...tableProps.pagination,
+                    showSizeChanger: true,     
+                    showQuickJumper: false,    
+                    showLessItems: true,       
+                    itemRender: () => null,    
+                    showTotal: undefined,      
+                }}
+                onChange={handleChange}
+                rowKey="id"
                 columns={[
-                    {
-                        title: "ID",
-                        dataIndex: "id",
-                    },
-                    {
-                        title: "Email",
-                        dataIndex: "email",
-                        render: (email, record) => {
-                            const isCurrent = record.id === currentUser.id;
-
-                            return (
-                                <span style={{ fontWeight: isCurrent ? "bold" : "normal" }}>
-                                    {email}{" "}
-                                    {isCurrent && (
-                                        <Tag color="blue" style={{ marginLeft: 8 }}>
-                                            Tú
-                                        </Tag>
-                                    )}
-                                </span>
-                            );
-                        }
-                    },
+                    { title: "ID", dataIndex: "id" },
+                    { title: "Email", dataIndex: "email" },
                     {
                         title: "Estado",
                         dataIndex: "activo",
-                        render: (activo: boolean) => (
+                        render: (activo) => (
                             <Tag color={activo ? "green" : "red"}>
                                 {activo ? "Activo" : "Inactivo"}
                             </Tag>
                         ),
                     },
-                    {
-                        title: "Tienda ID",
-                        dataIndex: "tiendaId",
-                    },
+                    { title: "Tienda ID", dataIndex: "tiendaId" },
                 ]}
             />
-
-            {isError && <p style={{ color: "red" }}>Error al cargar empleados</p>}
         </div>
     );
 };

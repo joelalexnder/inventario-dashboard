@@ -15,10 +15,12 @@ const getTiendaId = () => {
 };
 
 export const dataProvider: DataProvider = {
-    getList: async ({ resource }) => {
+    getList: async ({ resource, pagination }) => {
         try {
             const token = localStorage.getItem(TOKEN_KEY);
             const tiendaId = getTiendaId();
+            const page = (pagination as any)?.current ?? 1;
+            const size = (pagination as any)?.pageSize ?? 10;
 
             let url = `${API_URL}`;
 
@@ -28,13 +30,16 @@ export const dataProvider: DataProvider = {
                 } else if (resource === "categorias") {
                     url += `/tiendas/${tiendaId}/categorias`;
                 } else if (resource === "auth") {
-                    url += `/tiendas/${tiendaId}/usuarios`;
+                    url += `/auth`;
                 } else {
                     url += `/${resource}`;
                 }
             } else {
                 url += `/${resource}`;
             }
+
+            // Paginación
+            url += `?page=${page}&size=${size}`;
 
             const response = await fetch(url, {
                 headers: {
@@ -52,31 +57,36 @@ export const dataProvider: DataProvider = {
             let items: any[] = [];
             let total = 0;
 
-            
             if (Array.isArray(data.content)) {
                 items = data.content;
                 total = data.totalElements ?? data.content.length;
             } else if (Array.isArray(data.data)) {
                 items = data.data;
                 total = data.total ?? data.data.length;
-            } else if (Array.isArray(data.rows)) {
-                items = data.rows;
-                total = data.count ?? data.rows.length;
-            } else if (Array.isArray(data)) {
-                items = data;
-                total = data.length;
             } else {
-                items = [data];
-                total = 1;
+                throw new Error(`Respuesta de API inválida: ${JSON.stringify(data)}`);
             }
 
+            
             return {
                 data: items,
                 total,
+                pagination: {
+                    current: page,
+                    pageSize: size,
+                },
             };
+
         } catch (error) {
-            console.error("dataProvider error:", error);
-            throw error;
+            console.error(error);
+            return {
+                data: [],
+                total: 0,
+                pagination: {
+                    current: 1,
+                    pageSize: 10,
+                },
+            };
         }
     },
 
@@ -96,9 +106,7 @@ export const dataProvider: DataProvider = {
 
         const data = await response.json();
 
-        return {
-            data,
-        };
+        return { data };
     },
 
     create: async () => {
