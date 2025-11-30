@@ -2,23 +2,18 @@ import { GitHubBanner, Refine } from "@refinedev/core";
 import { DevtoolsPanel, DevtoolsProvider } from "@refinedev/devtools";
 import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 import { Authenticated } from "@refinedev/core";
-
 import { useNotificationProvider } from "@refinedev/antd";
 import "@refinedev/antd/dist/reset.css";
-
 import routerProvider, {
   DocumentTitleHandler,
   UnsavedChangesNotifier,
-  NavigateToResource,
-  CatchAllNavigate,
 } from "@refinedev/react-router";
 import { App as AntdApp } from "antd";
-import { BrowserRouter, Route, Routes, Outlet } from "react-router";
+import { BrowserRouter, Route, Routes, Outlet, Navigate } from "react-router";
 import { authProvider } from "./authProvider";
 import { dataProvider } from "./dataProvider";
 import { ColorModeContextProvider } from "./contexts/color-mode";
 import { Layout } from "./components/layout";
-import { Navigate } from "react-router";
 
 // Importar páginas
 import { Login } from "./pages/login";
@@ -26,7 +21,11 @@ import { Register } from "./pages/register";
 import { CategoriaList } from "./pages/categories/CategoriaList";
 import { ProductsList } from "./pages/products/ProductoList";
 import { EmpleadosList } from "./pages/empleados/EmpleadosList";
+
+// 1. IMPORTAR LA NUEVA PÁGINA DE CREAR
+import { EmpleadosCreate } from "./pages/empleados/EmpleadosCreate"; 
 import DashboardHome from "./pages/inicio";
+import { EmpleadosEdit } from "./pages/empleados/EmpleadosEdit";
 
 function App() {
   return (
@@ -45,30 +44,25 @@ function App() {
                   {
                     name: "dashboard",
                     list: "/",
-                    meta: {
-                      label: "Dashboard",
-                    },
+                    meta: { label: "Dashboard" },
                   },
                   {
                     name: "categorias",
                     list: "/categorias",
-                    meta: {
-                      label: "Categorías",
-                    },
+                    meta: { label: "Categorías" },
                   },
                   {
                     name: "productos",
                     list: "/productos",
-                    meta: {
-                      label: "Productos",
-                    },
+                    meta: { label: "Productos" },
                   },
                   {
-                    name: "auth",
+                    name: "auth", 
                     list: "/empleados",
-                    meta: {
-                      label: "Empleados",
-                    },
+                    create: "/empleados/create", 
+                    edit: "/empleados/edit/:id",
+                    
+                    meta: { label: "Empleados" },
                   },
                 ]}
                 options={{
@@ -93,18 +87,19 @@ function App() {
                       </Authenticated>
                     }
                   >
-                    {/* Ruta por defecto*/}
                     <Route path="/" element={<Navigate to="/inicio" replace />} />
-
                     <Route path="inicio" element={<DashboardHome />} />
                     <Route path="categorias" element={<CategoriaList />} />
                     <Route path="productos" element={<ProductsList />} />
-                    <Route path="empleados" element={<EmpleadosList />} />
+                    
+                    <Route path="empleados">
+                        <Route index element={<EmpleadosList />} />
+                        <Route path="create" element={<EmpleadosCreate />} />
+                        <Route path="edit/:id" element={<EmpleadosEdit />} /> 
+                    </Route>
 
                     <Route path="*" element={<Navigate to="/inicio" replace />} />
                   </Route>
-
-  
                 </Routes>
                 <RefineKbar />
                 <UnsavedChangesNotifier />

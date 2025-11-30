@@ -67,7 +67,6 @@ export const dataProvider: DataProvider = {
                 throw new Error(`Respuesta de API inválida: ${JSON.stringify(data)}`);
             }
 
-            
             return {
                 data: items,
                 total,
@@ -92,7 +91,26 @@ export const dataProvider: DataProvider = {
 
     getOne: async ({ resource, id }) => {
         const token = localStorage.getItem(TOKEN_KEY);
+        if (resource === "auth") {
+            const response = await fetch(`${API_URL}/auth?size=100`, {
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+            });
 
+            if (!response.ok) {
+                throw new Error("Error al cargar la lista de empleados");
+            }
+            const data = await response.json();
+            const usuarioEncontrado = data.content?.find((u: any) => u.id == id);
+
+            if (!usuarioEncontrado) {
+                throw new Error("Usuario no encontrado");
+            }
+
+            return { data: usuarioEncontrado };
+        }
         const response = await fetch(`${API_URL}/${resource}/${id}`, {
             headers: {
                 "Authorization": `Bearer ${token}`,
@@ -109,16 +127,107 @@ export const dataProvider: DataProvider = {
         return { data };
     },
 
-    create: async () => {
-        throw new Error("Operación no permitida");
+    create: async ({ resource, variables }) => {
+        const token = localStorage.getItem(TOKEN_KEY);
+        const tiendaId = getTiendaId();
+        let url = `${API_URL}`;
+
+        
+        if (resource === "auth") {
+            url += `/auth`; 
+        } 
+        
+        else if (tiendaId) {
+            if (resource === "productos") {
+                url += `/tiendas/${tiendaId}/productos`;
+            } else if (resource === "categorias") {
+                url += `/tiendas/${tiendaId}/categorias`;
+            } else {
+                url += `/${resource}`;
+            }
+        } else {
+            url += `/${resource}`;
+        }
+
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(variables),
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.msg || error.message || "Error al crear");
+        }
+
+        const data = await response.json();
+
+        return {
+            data: data.usuario || data, 
+        };
     },
 
-    update: async () => {
-        throw new Error("Operación no permitida");
-    },
 
-    deleteOne: async () => {
-        throw new Error("Operación no permitida");
+    update: async ({ resource, id, variables }) => {
+        const token = localStorage.getItem(TOKEN_KEY);
+        let url = `${API_URL}`;
+
+        
+        if (resource === "auth") {
+            url += `/auth/${id}`;
+        } else {
+            url += `/${resource}/${id}`;
+        }
+
+        const response = await fetch(url, {
+            method: "PUT",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(variables),
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.msg || "Error al actualizar");
+        }
+
+        const data = await response.json();
+
+        return {
+            data: data.usuario || data, 
+        };
+    },
+    deleteOne: async ({ resource, id }) => {
+        const token = localStorage.getItem(TOKEN_KEY);
+        let url = `${API_URL}`;
+
+        if (resource === "auth") {
+            url += `/auth/${id}`;
+        } else {
+            url += `/${resource}/${id}`;
+        }
+
+        const response = await fetch(url, {
+            method: "DELETE",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.msg || "Error al eliminar");
+        }
+
+        return {
+            data: { id } as any, 
+        };
     },
 
     getApiUrl: () => API_URL,

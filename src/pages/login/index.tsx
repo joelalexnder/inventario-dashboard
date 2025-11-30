@@ -21,7 +21,6 @@ export const Login = () => {
             }
         });
     };
-
     return (
         <div
             style={{
@@ -30,7 +29,6 @@ export const Login = () => {
                 background: "#f5f6fa",
             }}
         >
-            {/* Sección izquierda: formulario */}
             <div
                 style={{
                     flex: 1,
@@ -94,7 +92,6 @@ export const Login = () => {
                 </Card>
             </div>
 
-            {/* Sección derecha: imagen */}
             <div
                 style={{
                     flex: 1.2,
@@ -106,7 +103,6 @@ export const Login = () => {
                     display: "flex",
                 }}
             >
-                {/* Overlay para dar estilo elegante */}
                 <div
                     style={{
                         flex: 1,

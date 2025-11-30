@@ -1,57 +1,74 @@
-import { useTable } from "@refinedev/antd";
-import { Table, Button, Space } from "antd";
+import { useTable, List } from "@refinedev/antd";
+import { Table, Button } from "antd";
+import { ReloadOutlined } from "@ant-design/icons";
 
 export const CategoriaList = () => {
-    const { tableQuery } = useTable({
+    const { tableProps, tableQuery } = useTable({
         resource: "categorias",
-        pagination: { mode: "off" },
+        syncWithLocation: false, 
+        pagination: { 
+            mode: "server",
+            pageSize: 10 
+        }, 
     });
 
-    const data = tableQuery.data?.data ?? [];
-    const dataWithKeys = data.map((item: any, index: number) => ({
-        __rowKey: item.id ?? `${item.tiendaId ?? '0'}-${item.nombre ?? index}`,
-        ...item,
-    }));
-    const isLoading = tableQuery.isLoading;
-    const isError = tableQuery.isError;
-
     return (
-        <div style={{ padding: 20 }}>
-            <Space style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}>
-                <h2 style={{ margin: 0 }}>Categorías</h2>
-                <div>
-                    <Button type="default" onClick={() => tableQuery.refetch()} style={{ marginRight: 8 }}>
+        <List
+            title="Categorías"
+            headerButtons={({ defaultButtons }) => (
+                <>
+                    <Button 
+                        icon={<ReloadOutlined />} 
+                        type="default"
+                        onClick={() => tableQuery.refetch()}
+                    >
                         Refrescar
                     </Button>
-                </div>
-            </Space>
-
+                    {defaultButtons}
+                </>
+            )}
+        >
             <Table
-                dataSource={dataWithKeys}
-                rowKey={(record) => record.__rowKey}
-                loading={isLoading}
-                pagination={false}
+                {...tableProps}
+                rowKey="id" 
+                
+                pagination={{
+                    ...tableProps.pagination,
+                    showSizeChanger: true, 
+                    pageSizeOptions: ["10", "20", "50", "100"],
+                    showQuickJumper: false, 
+                    showTotal: undefined,  
+                    
+                    itemRender: (page, type, originalElement) => {
+                        if (type === 'page' || type === 'prev' || type === 'next' || type === 'jump-prev' || type === 'jump-next') {
+                            return null;
+                        }
+                        return originalElement;
+                    },
+                    
+                    position: ["bottomRight"],
+                }}
+                
                 columns={[
                     {
                         title: "ID",
                         dataIndex: "id",
+                        width: 80, 
+                        align: "center",
                     },
                     {
                         title: "Categoría",
                         dataIndex: "nombre",
+                        width: "auto", 
                     },
                     {
                         title: "Tienda ID",
                         dataIndex: "tiendaId",
+                        width: 100,
+                        align: "center",
                     },
                 ]}
             />
-
-            {isError && <p style={{ color: "red" }}>Error al cargar categorías</p>}
-
-            {!isLoading && dataWithKeys.length === 0 && (
-                <p>No hay categorías para mostrar. Si acabas de crear una categoría desde el backend, haz click en "Refrescar" o recarga la página.</p>
-            )}
-        </div>
+        </List>
     );
 };

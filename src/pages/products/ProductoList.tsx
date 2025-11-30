@@ -1,9 +1,9 @@
-import { useTable } from "@refinedev/antd";
-import { Table } from "antd";
+import { useTable, List } from "@refinedev/antd";
+import { Table, Tag, Button } from "antd";
+import { ReloadOutlined } from "@ant-design/icons";
 
 export const ProductsList = () => {
-
-    const { tableProps } = useTable({
+    const { tableProps, tableQuery } = useTable({
         resource: "productos",
         pagination: { mode: "server" },
     });
@@ -13,9 +13,21 @@ export const ProductsList = () => {
     };
 
     return (
-        <div style={{ padding: 20 }}>
-            <h2>Productos</h2>
-
+        <List
+            title="Productos"
+            headerButtons={({ defaultButtons }) => (
+                <>
+                    <Button 
+                        icon={<ReloadOutlined />} 
+                        type="default"
+                        onClick={() => tableQuery.refetch()}
+                    >
+                        Refrescar
+                    </Button>
+                    {defaultButtons}
+                </>
+            )}
+        >
             <Table
                 {...tableProps}
                 pagination={{
@@ -24,12 +36,13 @@ export const ProductsList = () => {
                     showQuickJumper: false,    
                     showLessItems: true,       
                     itemRender: () => null,    
-                    showTotal: undefined,    
+                    showTotal: undefined,      
+                    position: ["bottomRight"]
                 }}
                 onChange={handleChange}
                 rowKey={(record) => record.id ?? record.codigo_barras ?? record.nombre}
                 columns={[
-                    { title: "ID", dataIndex: "id", width: 60 },
+                    { title: "ID", dataIndex: "id", width: 60, align: "center" },
                     { title: "Código", dataIndex: "codigo_barras", width: 120 },
                     { title: "Nombre", dataIndex: "nombre", width: 200 },
 
@@ -37,29 +50,35 @@ export const ProductsList = () => {
                         title: "Precio",
                         dataIndex: "precio",
                         width: 100,
-                        render: (v: any) => `S/ ${Number(v || 0).toFixed(2)}`,
+                        align: "right",
+                        render: (v: any) => (
+                            <span style={{ fontWeight: 500 }}>
+                                S/ {Number(v || 0).toFixed(2)}
+                            </span>
+                        ),
                     },
-
                     {
                         title: "Stock",
                         dataIndex: "stock",
                         width: 100,
-                        render: (value: number) => (
-                            <span
-                                style={{
-                                    color: value < 10 ? "red" : "inherit",
-                                    fontWeight: value < 10 ? "bold" : "normal",
-                                }}
-                            >
-                                {value} {value < 10 ? "⚠ Bajo stock" : ""}
-                            </span>
-                        ),
+                        align: "center",
+                        render: (value: number) => {
+                            const isLow = value < 30;
+                            
+                            return (
+                                <Tag 
+                                    color={isLow ? "red" : "green"} 
+                                >
+                                    {value} {isLow ? "Bajo" : "Ud."}
+                                </Tag>
+                            );
+                        },
                     },
 
-                    { title: "Categoría ID", dataIndex: "categoriaId", width: 100 },
+                    { title: "Cat. ID", dataIndex: "categoriaId", width: 80, align: "center" },
                 ]}
                 scroll={{ x: 800 }}
             />
-        </div>
+        </List>
     );
 };
