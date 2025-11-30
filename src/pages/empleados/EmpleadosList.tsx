@@ -55,9 +55,9 @@ export const EmpleadosList = () => {
                     ...tableProps.pagination,
                     
                     showSizeChanger: true,
-                    pageSizeOptions: ["10", "20", "50", "100", "200", "300", "500", "1000", "1300", "1500", "2000", 2500, "3000", "5000", "10000"],
+                    pageSizeOptions: ["10", "20", "50", "100", "200", "300", "500", "1000", "1300", "1500", "2000", "2500", "3000"],
                     
-                    itemRender: (page, type, originalElement) => {
+                    itemRender: (_, type, originalElement) => {
                         if (type === 'page' || type === 'prev' || type === 'next' || type === 'jump-prev' || type === 'jump-next') {
                             return null;
                         }

@@ -39,7 +39,7 @@ export const CategoriaList = () => {
                     showQuickJumper: false, 
                     showTotal: undefined,  
                     
-                    itemRender: (page, type, originalElement) => {
+                    itemRender: (_, type, originalElement) => {
                         if (type === 'page' || type === 'prev' || type === 'next' || type === 'jump-prev' || type === 'jump-next') {
                             return null;
                         }
