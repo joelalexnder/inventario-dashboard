@@ -49,11 +49,11 @@ export const EmpleadosCreate = () => {
                         options={[
                             { 
                                 value: "empleado_tienda", 
-                                label: "📦 Empleado (Vendedor)" 
+                                label: "Empleado" 
                             },
                             { 
                                 value: "admin_tienda_secundario", 
-                                label: "🛠️ Admin Secundario" 
+                                label: "Supervisor" 
                             },
                         ]}
                     />
