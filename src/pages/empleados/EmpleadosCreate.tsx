@@ -33,7 +33,10 @@ export const EmpleadosCreate = () => {
                 <Form.Item
                     label="Contraseña"
                     name="password"
-                    rules={[{ required: true, message: "La contraseña es obligatoria" }]}
+                    rules={[
+                        { required: true, message: "La contraseña es obligatoria" },
+                        { min: 6, message: "La contraseña debe tener al menos 6 caracteres" }
+                    ]}
                 >
                     <Input.Password placeholder="********" />
                 </Form.Item>

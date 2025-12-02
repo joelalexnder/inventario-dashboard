@@ -31,7 +31,6 @@ export const EmpleadosList = () => {
         tableProps.onChange?.(pagination, filters, sorter, extra);
     };
 
-    // ⭐ NUEVO: Mapea el nombre 'admin_tienda_secundario' -> 'Supervisor'
     const getRoleLabel = (roleName: string) => {
         switch (roleName) {
             case "admin_tienda_secundario":
